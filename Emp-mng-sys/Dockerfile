@@ -15,7 +15,8 @@ FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Copy the compiled jar from the build stage
-COPY --from=build /app/target/project-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
+
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
