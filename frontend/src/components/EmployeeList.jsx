@@ -99,7 +99,14 @@ function EmployeeList()
                                         <td><span style={{color: 'var(--primary)', fontWeight: 'bold'}}>#{emp.id}</span></td>
                                         <td style={{fontWeight: '500'}}>{emp.name}</td>
                                         <td>{emp.doj}</td>
-                                        <td><span className="glass-button" style={{fontSize: '0.8rem', padding: '4px 8px'}}>{emp.dept.deptName}</span></td>
+                                        
+                              <td>
+  <span className="glass-button" style={{ fontSize: '0.8rem', padding: '4px 8px' }}>
+    {emp.dept?.deptName || "N/A"}
+  </span>
+</td>
+<td>{emp.dept?.designation || "N/A"}</td>
+
                                         <td>{emp.dept.designation}</td>
                                         <td>
                                             <div className="actions-cell">
