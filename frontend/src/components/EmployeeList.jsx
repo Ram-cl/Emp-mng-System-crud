@@ -17,11 +17,12 @@ function EmployeeList()
     deleteSpeed : 120
   })
 
-  useEffect(()=>{
-    EmployeeService.getAllEmployees().then(res =>{
-        setEmployees(res.data);
-    })
-  },[]);
+ useEffect(() => {
+    EmployeeService.getAllEmployees().then(res => {
+      console.log("API response:", res.data); // Debugging line
+      setEmployees(res.data);
+    }).catch(err => console.error("Error fetching employees:", err));
+  }, []);
 
   const deleteEmployee =(id)=>{
         EmployeeService.deleteEmployee(id).then(res=>{
