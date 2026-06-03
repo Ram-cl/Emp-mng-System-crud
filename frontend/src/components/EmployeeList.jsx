@@ -93,38 +93,48 @@ function EmployeeList()
                     </tr>
                 </thead>
                 <tbody>
-                    {
-                        employees.map(emp =>{
-                           return  <tr key={emp.id}>
-                                        <td><span style={{color: 'var(--primary)', fontWeight: 'bold'}}>#{emp.id}</span></td>
-                                        <td style={{fontWeight: '500'}}>{emp.name}</td>
-                                        <td>{emp.doj}</td>
-                                        
-                              <td>
-  <span className="glass-button" style={{ fontSize: '0.8rem', padding: '4px 8px' }}>
-    {emp.dept?.deptName || "N/A"}
-  </span>
-</td>
-<td>{emp.dept?.designation || "N/A"}</td>
+  {employees?.map(emp => (
+    <tr key={emp.id}>
+      <td><span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>#{emp.id}</span></td>
+      <td style={{ fontWeight: '500' }}>{emp.name}</td>
+      <td>{emp.doj}</td>
+      <td>
+        <span className="glass-button" style={{ fontSize: '0.8rem', padding: '4px 8px' }}>
+          {emp?.dept?.deptName ?? "N/A"}
+        </span>
+      </td>
+      <td>{emp?.dept?.designation ?? "N/A"}</td>
+      <td>
+        <div className="actions-cell">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+            onClick={() => navigate(`/update-emp/${emp.id}`)}
+          >
+            Edit
+          </button>
+          <button
+            className="btn btn-danger"
+            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+            onClick={() => deleteEmployee(emp.id)}
+          >
+            Delete
+          </button>
+        </div>
+      </td>
+    </tr>
+  ))}
 
-                                        <td>{emp.dept.designation}</td>
-                                        <td>
-                                            <div className="actions-cell">
-                                                <button type="button" className='btn btn-secondary' style={{padding: '6px 12px', fontSize: '0.85rem'}} onClick={()=> navigate(`/update-emp/${emp.id}`)}>Edit</button>
-                                                <button className='btn btn-danger' style={{padding: '6px 12px', fontSize: '0.85rem'}} onClick={()=> deleteEmployee(emp.id)}>Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                        })   
-                    }
-                    {employees.length === 0 && (
-                        <tr>
-                            <td colSpan="6" className="text-center py-4" style={{color: 'var(--text-muted)'}}>
-                                No employees found. Start by adding a new one.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
+  {employees?.length === 0 && (
+    <tr>
+      <td colSpan="6" className="text-center py-4" style={{ color: 'var(--text-muted)' }}>
+        No employees found. Start by adding a new one.
+      </td>
+    </tr>
+  )}
+</tbody>
+
             </table>
         </div>
     </div>
