@@ -20,7 +20,12 @@ import jakarta.validation.Valid;
 import com.example.demo.Employee;
 import com.example.demo.Service.EmployeeService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+
+	@CrossOrigin(origins = {
+    "http://localhost:5173",
+    "https://emp-mng-system-crud.vercel.app"
+})
+
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController
