@@ -15,7 +15,11 @@ import com.example.demo.Service.AuthService;
 import com.example.demo.User;
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+    "http://localhost:5173",
+    "https://emp-mng-system-crud.vercel.app"
+})
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
