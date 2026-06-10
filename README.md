@@ -9,7 +9,7 @@ This is a complete Full Stack Employee Management System. It features a robust R
 ### Backend (Spring Boot)
 *   **Java 17** & **Spring Boot 3.x**
 *   **Spring Data JPA** (Hibernate)
-*   **MySQL** (Database)
+*   **Postgres** (Database)
 *   **Spring Security** (Authentication)
 *   **SpringDoc OpenAPI (Swagger)** (API Documentation)
 
@@ -45,13 +45,19 @@ To run this full stack project locally, you need:
 ## ⚙️ Backend Setup & Configuration
 
 1. Open `src/main/resources/application.properties` in your Spring Boot project.
-2. Ensure your MySQL credentials match your local setup:
+2. Ensure your Postgres credentials match your local setup:
    ```properties
-   server.port = 3030
-   spring.datasource.url= jdbc:mysql://localhost:3306/db
-   spring.datasource.username= root
-   spring.datasource.password= 12345678
-   spring.jpa.hibernate.ddl-auto= update
+   server.port=3030
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/db
+spring.datasource.username=postgres
+spring.datasource.password=12345678
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
    ```
 3. Run the backend using Eclipse/STS (Run as Spring Boot App) or via command line:
    ```bash
