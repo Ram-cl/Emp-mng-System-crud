@@ -38,7 +38,7 @@ This is a complete Full Stack Employee Management System. It features a robust R
 To run this full stack project locally, you need:
 1.  **Java Development Kit (JDK) 17** or higher.
 2.  **Node.js** (Version 18 or higher recommended).
-3.  **MySQL Server** running on your local machine.
+3.  **Postgres Server** running on your local machine.
 
 ---
 
