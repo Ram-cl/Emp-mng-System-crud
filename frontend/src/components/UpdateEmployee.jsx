@@ -48,7 +48,8 @@ function UpdateEmployee() {
     // Load departments
     DepartmentService.getAllDepartments()
       .then(deptRes => {
-        setDepartments(deptRes.data);
+        const depts = Array.isArray(deptRes.data) ? deptRes.data : (Array.isArray(deptRes.data?.data) ? deptRes.data.data : []);
+        setDepartments(depts);
         
         // Load employee
         return EmployeeService.getEmployeeById(id);

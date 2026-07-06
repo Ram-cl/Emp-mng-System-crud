@@ -25,7 +25,7 @@ function Register() {
   useEffect(() => {
     DepartmentService.getAllDepartments()
       .then(res => {
-        const depts = res.data || [];
+        const depts = Array.isArray(res.data) ? res.data : (Array.isArray(res.data?.data) ? res.data.data : []);
         setDepartments(depts);
         if (depts.length > 0 && depts[0]?.id) {
           setFormData(prev => ({ ...prev, deptId: depts[0].id.toString() }));
