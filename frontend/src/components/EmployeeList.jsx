@@ -166,7 +166,7 @@ function EmployeeList() {
                       </span>
                     </td>
                     <td style={{ fontWeight: '500' }}>{emp.designation}</td>
-                    <td>${emp.salary?.toLocaleString()}</td>
+                    <td>${emp.salary ? emp.salary.toLocaleString() : '0'}</td>
                     <td style={{ textAlign: 'right' }}>
                       <div className="actions-cell" style={{ justifyContent: 'flex-end' }}>
                         <button

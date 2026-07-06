@@ -85,7 +85,7 @@ function EmployeeProfile() {
 
               <div>
                 <label className="modern-label" style={{ marginBottom: '2px' }}>Salary</label>
-                <p style={{ fontSize: '1.05rem', fontWeight: '500' }}>${employee?.salary?.toLocaleString()}</p>
+                <p style={{ fontSize: '1.05rem', fontWeight: '500' }}>${employee?.salary ? employee.salary.toLocaleString() : '0'}</p>
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
