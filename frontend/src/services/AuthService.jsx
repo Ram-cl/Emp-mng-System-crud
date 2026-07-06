@@ -1,15 +1,12 @@
-import axios from 'axios';
-
-// Use your Render backend URL
-const AUTH_API_BASE = "https://emp-mng-system-crud.onrender.com/api/auth";
+import api from './axiosConfig';
 
 class AuthService {
     login(user) {
-        return axios.post(`${AUTH_API_BASE}/login`, user);
+        return api.post(`/api/auth/login`, user);
     }
 
     register(user) {
-        return axios.post(`${AUTH_API_BASE}/register`, user);
+        return api.post(`/api/auth/register`, user);
     }
 }
 

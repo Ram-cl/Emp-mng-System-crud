@@ -9,6 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data; 
 import lombok.NoArgsConstructor;
 
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="users")
 @Data
@@ -25,5 +29,10 @@ public class User {
     @NotBlank(message = "Password cannot be empty")
     private String password;
     
+    private String role; // "ADMIN" or "EMPLOYEE"
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Employee employee;
 }
 

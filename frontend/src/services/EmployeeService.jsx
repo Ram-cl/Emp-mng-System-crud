@@ -1,33 +1,29 @@
-import axios from 'axios';
-
-const EMPLOYEE_API = "https://emp-mng-system-crud.onrender.com/api/v1/employees";
+import api from './axiosConfig';
 
 class EmployeeService {
     addEmployee(employee) {
-        return axios.post(EMPLOYEE_API, employee);
+        return api.post("/api/v1/employees", employee);
     } 
-    getAllEmployees() {
-        return axios.get(EMPLOYEE_API);
+    getAllEmployees(page = 0, size = 5, sortBy = "id", sortDir = "asc") {
+        return api.get(`/api/v1/employees?page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}`);
     }
-    searchEmployees(name) {
-        return axios.get(`${EMPLOYEE_API}/search?name=${name}`);
+    searchEmployees(name, page = 0, size = 5, sortBy = "id", sortDir = "asc") {
+        return api.get(`/api/v1/employees/search?name=${name}&page=${page}&size=${size}&sortBy=${sortBy}&sortDir=${sortDir}`);
     }
     getEmployeeById(employeeId) {
-        return axios.get(`${EMPLOYEE_API}/${employeeId}`);
+        return api.get(`/api/v1/employees/${employeeId}`);
     }
     updateEmployee(employeeId, employee) {
         if (!employeeId) {
             return Promise.reject(new Error('Missing employeeId for update'));
         }
-        const url = `${EMPLOYEE_API}/${employeeId}`;
-        return axios.put(url, employee);
+        return api.put(`/api/v1/employees/${employeeId}`, employee);
     }
     deleteEmployee(employeeId) {
         if (!employeeId) {
             return Promise.reject(new Error('Missing employeeId for delete'));
         }
-        const url = `${EMPLOYEE_API}/${employeeId}`;
-        return axios.delete(url);
+        return api.delete(`/api/v1/employees/${employeeId}`);
     }
 }
 
