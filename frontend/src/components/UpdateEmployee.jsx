@@ -54,7 +54,7 @@ function UpdateEmployee() {
         return EmployeeService.getEmployeeById(id);
       })
       .then(empRes => {
-        const empData = empRes.data;
+        const empData = empRes.data || {};
         setEmployee({
           name: empData.name || "",
           email: empData.email || "",
@@ -62,7 +62,7 @@ function UpdateEmployee() {
           designation: empData.designation || "",
           salary: empData.salary || "",
           doj: parseBackendDateForInput(empData.doj || ""),
-          deptId: empData.dept?.id ? empData.dept.id.toString() : ""
+          deptId: empData.dept?.id ? String(empData.dept.id) : ""
         });
       })
       .catch(error => {

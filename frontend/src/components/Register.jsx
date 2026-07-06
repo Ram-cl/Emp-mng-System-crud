@@ -25,13 +25,15 @@ function Register() {
   useEffect(() => {
     DepartmentService.getAllDepartments()
       .then(res => {
-        setDepartments(res.data);
-        if (res.data.length > 0) {
-          setFormData(prev => ({ ...prev, deptId: res.data[0].id.toString() }));
+        const depts = res.data || [];
+        setDepartments(depts);
+        if (depts.length > 0 && depts[0]?.id) {
+          setFormData(prev => ({ ...prev, deptId: depts[0].id.toString() }));
         }
       })
       .catch(err => {
         console.error("Error fetching departments", err);
+        setDepartments([]);
       });
   }, []);
 
