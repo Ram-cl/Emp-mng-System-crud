@@ -22,6 +22,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Email;
+
 @Entity
 @Table(name="employees")
 @Data
@@ -37,12 +40,33 @@ public class Employee
 	@NotBlank(message = "Employee name cannot be empty")
 	private String name;
 	
+	@Column(unique = true)
+	@NotBlank(message = "Email is required")
+	@Email(message = "Invalid email format")
+	private String email;
+	
+	@Column
+	@NotBlank(message = "Phone number is required")
+	private String phone;
+	
+	@Column
+	@NotBlank(message = "Designation is required")
+	private String designation;
+	
+	@Column
+	@NotNull(message = "Salary is required")
+	private Double salary;
+	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
 	@NotNull(message = "Date of joining cannot be null")
 	@PastOrPresent(message = "Date of joining cannot be in the future")
 	private Date doj;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "dept_fk")
+	@ManyToOne
+	@JoinColumn(name = "dept_id")
 	private Department dept;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
+	private User user;
 }

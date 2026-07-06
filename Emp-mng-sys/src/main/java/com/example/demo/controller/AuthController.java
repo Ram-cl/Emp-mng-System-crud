@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Service.AuthService;
 import com.example.demo.User;
+import com.example.demo.LoginResponse;
+import com.example.demo.RegisterRequest;
 import jakarta.validation.Valid;
 
 @CrossOrigin(origins = {
@@ -23,17 +25,27 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-@Autowired
-AuthService Auth;
-@PostMapping("/login")
-public boolean login(@RequestBody Map<String, String> data)
-{
-	return Auth.login(data.get("username"), data.get("password"));
-}
+    
+    @Autowired
+    AuthService Auth;
 
-@PostMapping("/register")
-public ResponseEntity<User> register(@Valid @RequestBody User user) {
-    User savedUser = Auth.register(user);
-    return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-}
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> data) {
+        try {
+            LoginResponse response = Auth.login(data.get("username"), data.get("password"));
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+        try {
+            User savedUser = Auth.register(request);
+            return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,15 +40,24 @@ public class EmployeeController
 		return employeeService.addEmployee(employee);
 	}
 	@GetMapping("/employees")
-	public List<Employee> getAllEmployees()
+	public Page<Employee> getAllEmployees(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir)
 	{
-		return employeeService.getAllEmployees();
+		return employeeService.getAllEmployees(page, size, sortBy, sortDir);
 	}
 	
 	@GetMapping("/employees/search")
-	public ResponseEntity<List<Employee>> searchEmployees(@RequestParam String name)
+	public ResponseEntity<Page<Employee>> searchEmployees(
+			@RequestParam String name,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size,
+			@RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "asc") String sortDir)
 	{
-		return new ResponseEntity<>(employeeService.searchEmployeesByName(name), HttpStatus.OK);
+		return new ResponseEntity<>(employeeService.searchEmployeesByName(name, page, size, sortBy, sortDir), HttpStatus.OK);
 	}
 	
 	@GetMapping("/employees/{id}")

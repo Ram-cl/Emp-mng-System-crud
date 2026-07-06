@@ -1,131 +1,195 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import EmployeeService from "../services/EmployeeService";
+import DepartmentService from "../services/DepartmentService";
 
-function CreateEmployee() 
-{
+function CreateEmployee() {
     const navigate = useNavigate();
+    const [departments, setDepartments] = useState([]);
+    
+    const [employee, setEmployee] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        designation: "",
+        salary: "",
+        doj: "",
+        deptId: ""
+    });
 
-    const [employees,setEmployees]=useState({
-        name:"",
-        doj:"",
-        dept:{
-            deptName:"",
-            designation:""
-        }
-    })
+    const [errors, setErrors] = useState({});
+    const [errorMsg, setErrorMsg] = useState("");
 
-    const [errors,setErrors]=useState({
-        name:"",
-        doj:"",
-        deptName:"",
-        designation:""
-    })
+    useEffect(() => {
+        DepartmentService.getAllDepartments()
+            .then(res => {
+                setDepartments(res.data);
+                if (res.data.length > 0) {
+                    setEmployee(prev => ({ ...prev, deptId: res.data[0].id.toString() }));
+                }
+            })
+            .catch(err => {
+                console.error("Error loading departments", err);
+            });
+    }, []);
 
-    const handleChange=(e)=>{
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEmployee(prev => ({ ...prev, [name]: value }));
+        setErrors(prev => ({ ...prev, [name]: "" }));
+    };
+
+    const handleCancel = (e) => {
         e.preventDefault();
-        const {name,value}=e.target;
-        if(name==="name" || name==="doj")
-        {
-               setEmployees({...employees,[name]:value}); 
-        }
-        else
-        {
-            setEmployees({...employees,dept:{...employees.dept,[name]:value}});
-        }
+        navigate("/employees");
+    };
 
-        setErrors({...errors,[name]:""});
-    }
-
-    const handleCancel=(e)=>{
-        e.preventDefault();
-        navigate("/");
-    }
-
-     const dateFormat=(date)=>{
+    const dateFormat = (date) => {
         const d = new Date(date);
-        const day = String(d.getDate()).padStart(2,"0");
-        const month = String(d.getMonth()+1).padStart(2,"0");
+        const day = String(d.getDate()).padStart(2, "0");
+        const month = String(d.getMonth() + 1).padStart(2, "0");
         const year = d.getFullYear();
         return `${day}-${month}-${year}`;
-    }
+    };
 
-    const handleSubmit=(e)=>{
-        e.preventDefault();
-        if(validate())
-        {
-            const formattedDate = dateFormat(employees.doj);
-            const employeeData=
-            {
-                ...employees,doj:formattedDate
-            } 
-
-            EmployeeService.addEmployee(employeeData).then(res=>{
-                navigate("/");
-            })
-        }
-    }
-
-    const validate=()=>{
+    const validate = () => {
         const formErrors = {};
-        let isValid=true;
+        let isValid = true;
 
-        if(!employees.name) { formErrors.name="Name is mandatory"; isValid=false; }
-        if(!employees.doj) { formErrors.doj="Date is mandatory"; isValid=false; }
-        if(!employees.dept.deptName) { formErrors.deptName="Department name is mandatory"; isValid=false; }
-        if(!employees.dept.designation) { formErrors.designation="Designation is mandatory"; isValid=false; }
+        if (!employee.name) { formErrors.name = "Name is mandatory"; isValid = false; }
+        if (!employee.email) { formErrors.email = "Email is mandatory"; isValid = false; }
+        if (!employee.phone) { formErrors.phone = "Phone number is mandatory"; isValid = false; }
+        if (!employee.designation) { formErrors.designation = "Designation is mandatory"; isValid = false; }
+        if (!employee.salary) { formErrors.salary = "Salary is mandatory"; isValid = false; }
+        if (!employee.doj) { formErrors.doj = "Date of joining is mandatory"; isValid = false; }
+        if (!employee.deptId) { formErrors.deptId = "Department selection is mandatory"; isValid = false; }
+        
         setErrors(formErrors);
         return isValid;
-    }
+    };
 
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
-        <div className="glass-panel premium-card" style={{ width: '100%', maxWidth: '600px' }}>
-            <h3 className="premium-card-title">Add New Employee</h3>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label className="modern-label">Full Name</label>
-                    <input type="text" id="name" name="name" className="modern-input"
-                    value={employees.name}
-                    onChange={handleChange}
-                    placeholder="e.g. Jane Doe" />
-                    {errors.name && <small className="text-danger"> {errors.name}</small>}
-                </div>
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setErrorMsg("");
 
-                <div className="form-group">
-                    <label className="modern-label">Date of Joining</label>
-                    <input type="date" id="doj" name="doj" className="modern-input"
-                    value={employees.doj}
-                    onChange={handleChange}/>
-                    {errors.doj && <small className="text-danger"> {errors.doj}</small>}
-                </div>
+        if (validate()) {
+            const formattedDate = dateFormat(employee.doj);
+            const employeeData = {
+                name: employee.name,
+                email: employee.email,
+                phone: employee.phone,
+                designation: employee.designation,
+                salary: parseFloat(employee.salary),
+                doj: formattedDate,
+                dept: {
+                    id: parseInt(employee.deptId)
+                }
+            };
 
-                <div className="form-group">
-                    <label className="modern-label">Department</label>
-                    <input type="text" id="deptName" name="deptName" className="modern-input"
-                    value={employees.dept.deptName}
-                    onChange={handleChange}
-                    placeholder="e.g. Engineering" />
-                    {errors.deptName && <small className="text-danger"> {errors.deptName}</small>}
-                </div>
+            EmployeeService.addEmployee(employeeData)
+                .then(res => {
+                    navigate("/employees");
+                })
+                .catch(err => {
+                    console.error("Error creating employee:", err);
+                    setErrorMsg(err.response?.data?.message || "Failed to create employee. Email may already exist.");
+                });
+        }
+    };
 
-                <div className="form-group">
-                    <label className="modern-label">Designation</label>
-                    <input type="text" id="designation" name="designation" className="modern-input"
-                    value={employees.dept.designation}
-                    onChange={handleChange}
-                    placeholder="e.g. Software Engineer" />
-                    {errors.designation && <small className="text-danger"> {errors.designation}</small>}
-                </div>
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px', paddingBottom: '40px' }}>
+            <div className="glass-panel premium-card" style={{ width: '100%', maxWidth: '600px' }}>
+                <h3 className="premium-card-title">Add New Employee</h3>
+                
+                {errorMsg && <div className="text-danger" style={{ textAlign: 'center', marginBottom: '15px', fontSize: '0.95rem' }}>{errorMsg}</div>}
+                
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label className="modern-label">Full Name</label>
+                        <input type="text" name="name" className="modern-input"
+                            value={employee.name}
+                            onChange={handleChange}
+                            placeholder="e.g. Jane Doe" 
+                        />
+                        {errors.name && <small className="text-danger"> {errors.name}</small>}
+                    </div>
 
-                <div className="flex-between" style={{ marginTop: '40px' }}>
-                    <button type="button" className="btn btn-secondary" onClick={handleCancel}>Cancel</button>
-                    <button type="submit" className="btn btn-success">Save Employee</button>
-                </div>
-            </form>
+                    <div className="form-group">
+                        <label className="modern-label">Email Address</label>
+                        <input type="email" name="email" className="modern-input"
+                            value={employee.email}
+                            onChange={handleChange}
+                            placeholder="e.g. jane@example.com" 
+                        />
+                        {errors.email && <small className="text-danger"> {errors.email}</small>}
+                    </div>
+
+                    <div className="form-group">
+                        <label className="modern-label">Phone Number</label>
+                        <input type="text" name="phone" className="modern-input"
+                            value={employee.phone}
+                            onChange={handleChange}
+                            placeholder="e.g. +1234567890" 
+                        />
+                        {errors.phone && <small className="text-danger"> {errors.phone}</small>}
+                    </div>
+
+                    <div className="form-group">
+                        <label className="modern-label">Department</label>
+                        <select name="deptId" className="modern-input"
+                            value={employee.deptId}
+                            onChange={handleChange}
+                            style={{ background: 'var(--input-bg)', color: 'var(--text-main)' }}
+                        >
+                            {departments.length === 0 ? (
+                                <option value="">No departments available. Create one first.</option>
+                            ) : (
+                                departments.map(d => (
+                                    <option key={d.id} value={d.id}>{d.deptName}</option>
+                                ))
+                            )}
+                        </select>
+                        {errors.deptId && <small className="text-danger"> {errors.deptId}</small>}
+                    </div>
+
+                    <div className="form-group">
+                        <label className="modern-label">Designation</label>
+                        <input type="text" name="designation" className="modern-input"
+                            value={employee.designation}
+                            onChange={handleChange}
+                            placeholder="e.g. Senior Software Engineer" 
+                        />
+                        {errors.designation && <small className="text-danger"> {errors.designation}</small>}
+                    </div>
+
+                    <div className="form-group">
+                        <label className="modern-label">Salary</label>
+                        <input type="number" name="salary" className="modern-input"
+                            value={employee.salary}
+                            onChange={handleChange}
+                            placeholder="e.g. 70000" 
+                        />
+                        {errors.salary && <small className="text-danger"> {errors.salary}</small>}
+                    </div>
+
+                    <div className="form-group">
+                        <label className="modern-label">Date of Joining</label>
+                        <input type="date" name="doj" className="modern-input"
+                            value={employee.doj}
+                            onChange={handleChange} 
+                        />
+                        {errors.doj && <small className="text-danger"> {errors.doj}</small>}
+                    </div>
+
+                    <div className="flex-between" style={{ marginTop: '40px' }}>
+                        <button type="button" className="btn btn-secondary" onClick={handleCancel}>Cancel</button>
+                        <button type="submit" className="btn btn-success" disabled={departments.length === 0}>Save Employee</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-  )
+    );
 }
 
-export default CreateEmployee
+export default CreateEmployee;
